@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>会員登録</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'account/css/style.css' %}" />
+</head>
+
+<body>
+	<h3>会員情報を入力してください。</h3>
+	<br />
+	<form action="/account/register/" method='POST'>
+	{% csrf_token %}
+
+	<table>
+		{{register_form.as_table}}
+		<tr>
+			<td colspan="2"><input type="submit" value="会員登録"></td>
+		</tr>
+	</table>
+	{% if message %}
+		<div>{{message}}</div>
+	{% endif %}
+	</form>
+
+	<li><a href="/account/register/">商品検索</a></li>
+
+</body>
+
+</html>
