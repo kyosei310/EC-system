@@ -1,0 +1,28 @@
+{% load static %}
+<html>
+	<head>
+		<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+		<title>ログイン</title>
+		<link rel='stylesheet' type='text/css' href='{% static "account/css/style.css" %}' />
+	</head>
+	<body>
+		<h3>ログインして下さい。</h3>
+		<br />
+        <form action="/account/login/" method='POST'>
+        {% csrf_token %}
+
+        <table>
+			{{login_form.as_table}}
+			<tr>
+				<td colspan="2"><input type="submit" value="ログイン"></td>
+			</tr>
+		</table>
+		{% if message %}
+			<div>{{message}}</div>
+		{% endif %}
+		</form>
+
+		<li><a href="/account/register/">会員登録</a></li>
+
+	</body>
+</html>
