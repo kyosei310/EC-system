@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+	<title>商品検索</title>
+	<link rel='stylesheet' type='text/css' href='{% static "shopping/css/style.css" %}' />
+</head>
+<body>
+	<form action="{% url 'shopping:search_result' %}" method="get">
+        <label for="category">カテゴリ：</label>
+        <select name="category" id="category">
+            <option value="">-- 選択してください --</option>
+            {% for cat in categories %}
+                <option value="{{ cat.category_id }}">{{ cat.name }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="keyword">キーワード：</label>
+        <input type="text" name="keyword" id="keyword">
+
+        <button type="submit">検索</button>
+    </form>
+	<br />
+    <hr>
+    {% if login_user %}
+        <div class="user-info">
+            <p>ようこそ {{ login_user.name }} さん</p>
+            <ul>
+                <li><a href="{% url 'account:login' %}">会員情報の確認</a></li>
+                <li><a href="{% url 'account:login' %}">会員情報の変更</a></li>
+                <li><a href="{% url 'account:logout' %}">ログアウト</a></li>
+            </ul>
+        </div>
+    {% else %}
+        <div class="login-area">
+            <a href="{% url 'account:login' %}">ログイン</a>
+        </div>
+    {% endif %}
+
+</body>
+</html>

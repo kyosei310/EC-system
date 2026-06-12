@@ -1,0 +1,48 @@
+{% load static %}
+
+<!DOCTYPE html>
+<head>
+	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+	<title>検索結果</title>
+	<link rel='stylesheet' type='text/css' href='{% static "shopping/css/style.css" %}' />
+</head>
+<body>
+    <p>
+        キーワード「{{ keyword|default:"（指定なし）" }}」
+        カテゴリ「{% if selected_category_obj %}{{ selected_category_obj.name }}{% else %}（指定なし）{% endif %}」
+        の検索結果
+    </p>
+
+    {% if items %}
+	<table border="1" cellpadding="5" cellspacing="0">
+		<thead>
+                <tr>
+                    <th>商品名</th>
+                    <th>商品の色</th>
+                    <th>メーカー名</th>
+                    <th>価格</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'shopping:item_detail' item.item_id %}">{{ item.name }}</a>
+                        </td>
+                        <td>{{ item.color }}</td>
+                        <td>{{ item.manufacturer }}</td>
+                        <td>{{ item.price }}円</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>該当する商品はありません。</p>
+    {% endif %}
+
+    <p>
+        <a href="{% url 'shopping:main' %}">商品検索画面に戻る</a>
+    </p>
+
+</body>
+</html>
