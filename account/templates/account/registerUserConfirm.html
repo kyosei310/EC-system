@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>会員登録の確認</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'account/css/style.css' %}" />
+</head>
+
+<body>
+	<h3>以下の情報で登録しますか。</h3>
+	<br />
+
+	<form action="/account/registerCommit/" method="post">
+		{% csrf_token %}
+		<table>
+			<tr>
+				<td>会員ID: </td>
+				<td>{{ register_form.user_id }}</td>
+			</tr>
+			<tr>
+				<td>パスワード: </td>
+				<td>{{ masked_password }}</td>
+			</tr>
+			<tr>
+				<td>名前: </td>
+				<td>{{ register_form.name }}</td>
+			</tr>
+			<tr>
+				<td>住所: </td>
+				<td>{{ register_form.address }}</td>
+			</tr>
+			<tr>
+				<td colspan="2"><button type="button" onclick="location.href='/account/register/'">戻る</button> <input type="submit" value="登録確認"></td>
+
+			</tr>
+		</table>
+
+		<input type="hidden" name="user_id" value="{{ register_form.user_id }}">
+		<input type="hidden" name="password" value="{{ register_form.password }}">
+		<input type="hidden" name="name" value="{{ register_form.name }}">
+		<input type="hidden" name="address" value="{{ register_form.address }}">
+	</form>
+
+<li><a href="/account/register/">商品検索</a></li>
+
+</body>
+
+</html>
