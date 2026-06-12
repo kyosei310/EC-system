@@ -42,20 +42,39 @@ def logout(request):
 def register(request):
     if request.method == "GET":
         register_form = forms.RegisterForm()
-        return render(request, "account/register.html", locals())
+        return render(request, "account/registerUser.html", locals())
     if request.method == "POST":
         register_form = forms.RegisterForm(request.POST)
         
         if register_form.is_valid():
+            masked_password = '●' * len(register_form.cleaned_data['password'])
+            context = {
+                "register_form": register_form.cleaned_data,
+                "masked_password": masked_password
+            }
+            return render(request, "account/registerUserConfirm.html", context)
+        else:
+            return render(request, "account/registerUser.html", locals())
+
+
+
+def register_commit(request):
+    if request.method == "GET":
+        register_form = forms.RegisterForm()
+        return render(request, "account/registerUser.html", locals())
+    if request.method == "POST":
+        register_form = forms.RegisterConfirmForm(request.POST)
+        
+        if register_form.is_valid():
             user = models.AccountUser()
             user.user_id = register_form.cleaned_data["user_id"]
-            user.password = register_form.cleaned_data["password"]            
-            user.name = register_form.cleaned_data["name"]            
-            user.address = register_form.cleaned_data["address"]            
+            user.password = register_form.cleaned_data["password"]
+            user.name = register_form.cleaned_data["name"]
+            user.address = register_form.cleaned_data["address"]
             user.save()
             context = {
                 "name": user.name
             }
-            return render(request, "account/user_create_commit.html", context)
+            return render(request, "account/registerUserCommit.html", context)
         else:
-            return render(request, "account/register.html", locals())
+            return render(request, "account/registerUser.html", locals())

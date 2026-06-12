@@ -24,3 +24,10 @@ class RegisterForm(forms.Form):
             raise forms.ValidationError("パスワードが一致しません")
         
         return cleaned_data
+    
+    
+class RegisterConfirmForm(forms.Form):
+    user_id = forms.CharField(label= "会員ID", max_length=128)
+    password = forms.CharField(label="パスワード", max_length=256, widget=forms.PasswordInput(render_value=False))
+    name = forms.CharField(label= "ユーザー名", max_length=128)
+    address = forms.CharField(label= "住所", max_length=256)
