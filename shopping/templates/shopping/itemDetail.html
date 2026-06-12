@@ -1,0 +1,65 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+    <title>商品詳細</title>
+    <link rel='stylesheet' type='text/css' href='{% static "shopping/css/style.css" %}' />
+</head>
+<body>
+
+    <h1>商品詳細</h1>
+
+    <hr>
+
+    {# ===== 商品詳細表 ===== #}
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>商品名</th>
+            <td>{{ item.name }}</td>
+        </tr>
+        <tr>
+            <th>商品の色</th>
+            <td>{{ item.color }}</td>
+        </tr>
+        <tr>
+            <th>メーカー名</th>
+            <td>{{ item.manufacturer }}</td>
+        </tr>
+        <tr>
+            <th>価格</th>
+            <td>{{ item.price }}円</td>
+        </tr>
+        <tr>
+            <th>在庫数</th>
+            <td>{{ item.stock }}</td>
+        </tr>
+    </table>
+
+    <hr>
+
+    {# ===== カート追加フォーム ===== #}
+    {% if item.stock > 0 %}
+        <form action="{% url 'shopping:add_to_cart' item.item_id %}" method="post">
+            {% csrf_token %}
+            <label for="amount">数量：</label>
+            <select name="amount" id="amount">
+                {% for q in quantity_range %}
+                    <option value="{{ q }}">{{ q }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">ショッピングカートに入れる</button>
+        </form>
+    {% else %}
+        <p>※ 在庫切れのため購入できません。</p>
+    {% endif %}
+
+    <p>
+        <a href="javascript:history.back()">前のページに戻る</a>
+        ｜
+        <a href="{% url 'shopping:main' %}">商品検索画面に戻る</a>
+    </p>
+
+</body>
+</html>

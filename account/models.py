@@ -4,7 +4,7 @@ from django.db import models
 
 class AccountUser(models.Model):
     class Meta:
-        db_table = 'users'
+        db_table = 'account_user'
         ordering = ["-user_id"]
         # vervose_name = "ユーザ"
         # vervose_name_plural = "ユーザ"
@@ -16,3 +16,12 @@ class AccountUser(models.Model):
     
     def __str__(self):
         return self.user_id
+
+
+class Admin(models.Model):
+    # varchar, 128桁, PK, INDEX, 自動採番なし
+    admin_id = models.CharField(max_length=128, primary_key=True, db_index=True)
+    password = models.CharField(max_length=256)
+ 
+    class Meta:
+        db_table = 'administrator_admin'

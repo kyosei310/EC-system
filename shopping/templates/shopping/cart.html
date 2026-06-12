@@ -1,0 +1,53 @@
+{% load static %}
+
+<!DOCTYPE html>
+<head>
+	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+	<title>ショッピングカート</title>
+	<link rel='stylesheet' type='text/css' href='{% static "shopping/css/style.css" %}' />
+</head>
+<body>
+
+    <h1>ショッピングカート</h1>
+
+    {% if login_user %}
+        <p>ようこそ {{ login_user.name }} さん</p>
+    {% endif %}
+
+    <hr>
+
+    {% if cart_items %}
+        <table>
+            <thead>
+                <tr>
+                    <th>商品名</th>
+                    <th>商品の色</th>
+                    <th>メーカー名</th>
+                    <th>単価</th>
+                    <th>数量</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ci in cart_items %}
+                    <tr>
+                        <td>{{ ci.item.name }}</td>
+                        <td>{{ ci.item.color }}</td>
+                        <td>{{ ci.item.manufacturer }}</td>
+                        <td>{{ ci.item.price }}円</td>
+                        <td>{{ ci.amount }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p><strong>合計　{{ total }} 円</strong></p>
+    {% else %}
+        <p>ショッピングカートには商品がありません。</p>
+    {% endif %}
+
+    <p>
+        <a href="{% url 'shopping:main' %}">商品検索画面に戻る</a>
+    </p>
+
+</body>
+</html>
