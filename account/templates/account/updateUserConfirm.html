@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+		<title>会員情報の更新</title>
+		<link rel='stylesheet' type='text/css' href='{% static "account/css/style.css" %}' />
+	</head>
+<body>
+    <h3>以下の会員情報で更新しますか？</h3>
+    <br />
+	<form action="/account/updateUserCommit/" method='POST'>
+    {% csrf_token %}
+        <table>
+            <tr>
+                <td>会員ID: </td>
+                <td>{{ update_form.user_id }}</td>
+            </tr>
+            <tr>
+                <td>パスワード: </td>
+                <td>{{ masked_password }}</td>
+            </tr>
+            <tr>
+                <td>名前: </td>
+                <td>{{ update_form.name }}</td>
+            </tr>
+            <tr>
+                <td>住所: </td>
+                <td>{{ update_form.address }}</td>
+            </tr>
+            <tr>
+				<td colspan="2"><input type="submit" value="変更"></td>
+            </tr>
+        </table>
+        <input type="hidden" name="user_id" value="{{ update_form.user_id }}">
+        <input type="hidden" name="name" value="{{ update_form.name }}">
+        <input type="hidden" name="address" value="{{ update_form.address }}">
+    </form>
+
+	<li><a href="/shopping/">商品検索</a></li>
+
+</body>
+</html>

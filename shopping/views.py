@@ -4,11 +4,12 @@ from .models import Category, Item, ItemsInCart
 from account.models import AccountUser
 
 
+
 def get_login_user(request):
-    user_id = request.session.get('user_id')
-    if not user_id:
+    if not request.session.get("is_login", None):
         return None
-    return AccountUser.objects.filter(pk=user_id).first()
+    user_id = request.session.get("user_id")
+    return AccountUser.objects.get(pk=user_id)
 
 
 def main(request):
@@ -28,7 +29,7 @@ def search_result(request):
     items = Item.objects.all()
     if category_id:
         items = items.filter(category_id=category_id)
-        selected_category_obj = Category.objects.filter(pk=category_id)
+        selected_category_obj = Category.objects.get(pk=category_id)
     if keyword:
         items = items.filter(name__icontains=keyword)
     items = items.order_by('-recommended', 'item_id')
@@ -76,17 +77,12 @@ def add_to_cart(request, item_id):
     if amount < 1:
         amount = 1
 
-    # 同一ユーザー・同一商品が既にカートにある場合は数量を加算
-    cart_item = ItemsInCart.objects.filter(user=login_user, item=item).first()
-    if cart_item:
-        cart_item.amount += amount
-        cart_item.save()
-    else:
-        new_cart_item = ItemsInCart()
-        new_cart_item.user = login_user
-        new_cart_item.item = item
-        new_cart_item.amount = amount
-        new_cart_item.save()
+
+    new_cart_item = ItemsInCart()
+    new_cart_item.user = login_user
+    new_cart_item.item = item
+    new_cart_item.amount = amount
+    new_cart_item.save()
 
     return redirect('shopping:cart')
 

@@ -17,8 +17,8 @@
     <hr>
 
     {% if cart_items %}
-        <table>
-            <thead>
+	<table border="1" cellpadding="5" cellspacing="0">
+        <thead>
                 <tr>
                     <th>商品名</th>
                     <th>商品の色</th>
@@ -46,7 +46,7 @@
     {% endif %}
 
     <p>
-        <a href="{% url 'shopping:main' %}">商品検索画面に戻る</a>
+        <a href="/shopping/">商品検索へ</a>
     </p>
 
 </body>
