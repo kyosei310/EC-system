@@ -24,17 +24,19 @@
 	<br />
     <hr>
     {% if login_user %}
+        <li><a href="/shopping/cart/">ショッピングカートを見る</a></li>
         <div class="user-info">
             <p>ようこそ {{ login_user.name }} さん</p>
             <ul>
-                <li><a href="{% url 'account:login' %}">会員情報の確認</a></li>
-                <li><a href="{% url 'account:login' %}">会員情報の変更</a></li>
-                <li><a href="{% url 'account:logout' %}">ログアウト</a></li>
+                <li><a href="/account/userInfo/">会員情報の確認</a></li>
+                <li><a href="/account/updateUser/">会員情報の変更</a></li>
+                <li><a href="/account/logout/">ログアウト</a></li>
             </ul>
         </div>
     {% else %}
+        <li><a href="/shopping/cart/">ショッピングカートを見る</a></li>
         <div class="login-area">
-            <a href="{% url 'account:login' %}">ログイン</a>
+            <a href="/account/login">ログイン</a>
         </div>
     {% endif %}
 

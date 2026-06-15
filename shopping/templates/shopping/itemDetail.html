@@ -39,7 +39,6 @@
 
     <hr>
 
-    {# ===== カート追加フォーム ===== #}
     {% if item.stock > 0 %}
         <form action="{% url 'shopping:add_to_cart' item.item_id %}" method="post">
             {% csrf_token %}
@@ -58,7 +57,7 @@
     <p>
         <a href="javascript:history.back()">前のページに戻る</a>
         ｜
-        <a href="{% url 'shopping:main' %}">商品検索画面に戻る</a>
+        <a href="/shopping/">商品検索画面へ</a>
     </p>
 
 </body>

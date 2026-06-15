@@ -1,15 +1,20 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import View
 from account import models
 from account import forms
 
 
-# Create your views here.
+def get_login_user(request):
+    if not request.session.get("is_login", None):
+        return None
+    user_id = request.session.get("user_id")
+    return models.AccountUser.objects.get(pk=user_id)
+
 
 def login(request):
     if request.session.get("is_login", None):
-        return redirect("/")
+        return redirect("/shopping/")
     if request.method == "POST":
         login_form = forms.LoginForm(request.POST)
         message = "入力した内容を再度確認してください"
@@ -24,7 +29,7 @@ def login(request):
             if user.password == password:
                 request.session["is_login"] = True
                 request.session["user_id"] = user.user_id
-                return redirect("/")
+                return redirect("/shopping/")
             else:
                 message = "パスワードが正しくありません。"
                 return render(request, "account/login.html", locals())
@@ -35,9 +40,9 @@ def login(request):
 
 def logout(request):
     if not request.session.get("is_login", None):
-        return redirect("/")
+        return redirect("/shopping/")
     request.session.flush()
-    return redirect("/")
+    return redirect("/shopping/")
 
 def register(request):
     if request.method == "GET":
@@ -78,3 +83,76 @@ def register_commit(request):
             return render(request, "account/registerUserCommit.html", context)
         else:
             return render(request, "account/registerUser.html", locals())
+
+
+def user_info(request):
+    user = get_login_user(request)
+    if not user:
+        return redirect("/account/login/")
+    return render(request, "account/UserInfo.html", {"user": user})
+
+
+def update_user(request):
+    user = get_login_user(request)
+    if not user:
+        return redirect("/account/login/")
+
+    if request.method == "POST":
+        update_form = forms.RegisterForm(request.POST)
+        if update_form.is_valid():
+            request.session["update_password"] = update_form.cleaned_data.get("password")
+            masked_password = "*" * len(update_form.cleaned_data.get("password"))
+            context = {
+                "update_form": update_form.cleaned_data,
+                "masked_password": masked_password,
+            }
+            return render(request, "account/updateUserConfirm.html", context)
+        message = "入力した内容を再度確認してください"
+        return render(request, "account/updateUser.html", locals())
+
+    update_form = forms.RegisterForm(initial={
+        "user_id": user.user_id,
+        "name": user.name,
+        "address": user.address,
+    })
+    return render(request, "account/updateUser.html", {"update_form": update_form})
+
+
+def update_user_commit(request):
+    user = get_login_user(request)
+    if not user:
+        return redirect("/account/login/")
+
+    if request.method != "POST":
+        return redirect("/account/updateUser/")
+
+    user.name = request.POST.get("name", user.name)
+    user.address = request.POST.get("address", user.address)
+    user.password = request.session["update_password"]
+    user.save()
+
+    return render(request, "account/updateUserCommit.html", {"user": user})
+
+
+def withdraw_confirm(request):
+    user = get_login_user(request)
+    if not user:
+        return redirect("/account/login/")
+
+    return render(request, "account/withdrawConfirm.html", {"user": user})
+
+
+
+
+
+
+def withdraw_commit(request):
+    user = get_login_user(request)
+    if not user:
+        return redirect("/account/login/")
+    
+    name = user.name
+    user.delete()
+    request.session.flush()  # セッションを全クリア
+
+    return render(request, "account/withdrawCommit.html", {"name": name})

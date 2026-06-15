@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+		<title>会員情報の更新完了</title>
+		<link rel='stylesheet' type='text/css' href='{% static "account/css/style.css" %}' />
+	</head>
+<body>
+    <h3>{{ name }}さんの会員情報を以下の内容で更新しました。</h3>
+    <br />
+    <table>
+        <tr>
+            <td>会員ID: </td>
+            <td>{{ user.user_id }}</td>
+        </tr>
+        <tr>
+            <td>パスワード: </td>
+            <td>表示なし</td>
+        </tr>
+        <tr>
+            <td>名前: </td>
+            <td>{{ user.name }}</td>
+        </tr>
+        <tr>
+            <td>住所: </td>
+            <td>{{ user.address }}</td>
+        </tr>
+    </table>
+    <br />
+    <li><a href="/shopping/">商品検索</a></li>
+</body>
+</html>
