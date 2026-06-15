@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+        <title>購入完了</title>
+        <link rel='stylesheet' type='text/css' href='{% static "shopping/css/style.css" %}' />
+    </head>
+<body>
+
+    <h1>ご注文ありがとうございました。</h1>
+    <p>{{ login_user.name }} さんのご注文を承りました。</p>
+
+    <table>
+        <tr>
+            <th>注文番号</th>
+            <td>{{ purchase.purchase_id }}</td>
+        </tr>
+        <tr>
+            <th>配送先</th>
+            <td>{{ purchase.destination }}</td>
+        </tr>
+        <tr>
+            <th>注文日時</th>
+            <td>{{ purchase.booked_date|date:"Y年m月d日 H:i" }}</td>
+        </tr>
+    </table>
+
+    <br />
+    <li><a href="/shopping/">商品検索</a></li>
+    <li><a href="/shopping/purchaseHistory/">購入履歴</a></li>
+
+
+</body>
+</html>

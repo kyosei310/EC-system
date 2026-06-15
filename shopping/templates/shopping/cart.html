@@ -1,11 +1,11 @@
 {% load static %}
-
 <!DOCTYPE html>
-<head>
-	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-	<title>ショッピングカート</title>
-	<link rel='stylesheet' type='text/css' href='{% static "shopping/css/style.css" %}' />
-</head>
+<html lang="ja">
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+        <title>ショッピングカート</title>
+        <link rel='stylesheet' type='text/css' href='{% static "shopping/css/style.css" %}' />
+    </head>
 <body>
 
     <h1>ショッピングカート</h1>
@@ -17,14 +17,15 @@
     <hr>
 
     {% if cart_items %}
-	<table border="1" cellpadding="5" cellspacing="0">
-        <thead>
+        <table border="1" cellpadding="5" cellspacing="0">
+            <thead>
                 <tr>
                     <th>商品名</th>
                     <th>商品の色</th>
                     <th>メーカー名</th>
                     <th>単価</th>
                     <th>数量</th>
+                    <th>操作</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,19 +35,39 @@
                         <td>{{ ci.item.color }}</td>
                         <td>{{ ci.item.manufacturer }}</td>
                         <td>{{ ci.item.price }}円</td>
-                        <td>{{ ci.amount }}</td>
+                        <td>
+                                <form action="{% url 'shopping:update_cart' ci.id %}" method="post">
+                                {% csrf_token %}
+                                <select name="amount">
+                                    {% for q in ci.item.stock_range %}
+                                        <option value="{{ q }}" {% if q == ci.amount %}selected{% endif %}>{{ q }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit">更新</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="{% url 'shopping:delete_cart' ci.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" onclick="return confirm('削除しますか？');">削除</button>
+                            </form>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
 
         <p><strong>合計　{{ total }} 円</strong></p>
+
+        <p>
+            <li><a href="{% url 'shopping:purchase' %}">購入</a></li>
+        </p>
     {% else %}
         <p>ショッピングカートには商品がありません。</p>
     {% endif %}
 
     <p>
-        <a href="/shopping/">商品検索へ</a>
+        <li><a href="/shopping/">商品検索へ</a></li>
     </p>
 
 </body>

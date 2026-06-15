@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+        <title>購入確認</title>
+        <link rel='stylesheet' type='text/css' href='{% static "shopping/css/style.css" %}' />
+    </head>
+<body>
+
+    <h1>購入内容の確認</h1>
+    <p>ようこそ {{ login_user.name }} さん</p>
+
+    <hr>
+
+    <h3>ご注文内容</h3>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>商品名</th>
+                <th>商品の色</th>
+                <th>メーカー名</th>
+                <th>単価</th>
+                <th>数量</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ci in cart_items %}
+                <tr>
+                    <td>{{ ci.item.name }}</td>
+                    <td>{{ ci.item.color }}</td>
+                    <td>{{ ci.item.manufacturer }}</td>
+                    <td>{{ ci.item.price }}円</td>
+                    <td>{{ ci.amount }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p><strong>合計　{{ total }} 円</strong></p>
+
+    <h3>配送先</h3>
+    <p>{{ destination }}</p>
+
+    <h3>お支払い方法</h3>
+    <p>{{ payment_method }}</p>
+
+    <form action="{% url 'shopping:purchase_commit' %}" method="post">
+        {% csrf_token %}
+        <button type="button" onclick=location.href="/shopping/purchase/">戻る</button>
+        <button type="submit">注文を確定する</button>
+    </form>
+
+</body>
+</html>

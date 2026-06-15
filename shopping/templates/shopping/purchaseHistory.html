@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+        <title>購入履歴</title>
+        <link rel='stylesheet' type='text/css' href='{% static "shopping/css/style.css" %}' />
+    </head>
+<body>
+
+    <h1>購入履歴</h1>
+    <p>{{ login_user.name }} さんのご注文履歴</p>
+
+    <hr>
+
+    {% if history %}
+        <table border="1" cellpadding="5" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>注文番号</th>
+                    <th>注文日時</th>
+                    <th>商品点数</th>
+                    <th>合計金額</th>
+                    <th>状態</th>
+                    <th>詳細</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for h in history %}
+                    <tr>
+                        <td>{{ h.purchase.purchase_id }}</td>
+                        <td>{{ h.purchase.booked_date|date:"Y/m/d H:i" }}</td>
+                        <td>{{ h.item_count }}</td>
+                        <td>{{ h.total }}円</td>
+                        <td>{% if h.purchase.cancel %}キャンセル済{% else %}有効{% endif %}</td>
+                        <td>
+                            <a href="{% url 'shopping:purchase_detail' h.purchase.purchase_id %}"></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>購入履歴はありません。</p>
+    {% endif %}
+
+    <br />
+    <li><a href="/shopping/">商品検索</a></li>
+    <li><a href="/account/userInfo/">会員情報</a></li>
+
+</body>
+</html>

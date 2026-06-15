@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+        <title>購入手続き</title>
+        <link rel='stylesheet' type='text/css' href='{% static "shopping/css/style.css" %}' />
+    </head>
+<body>
+
+    <h1>購入手続き</h1>
+    <p>ようこそ {{ login_user.name }} さん</p>
+
+    <hr>
+
+    <h3>カート内容</h3>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>商品名</th>
+                <th>単価</th>
+                <th>数量</th>
+                <th>小計</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ci in cart_items %}
+                <tr>
+                    <td>{{ ci.item.name }}</td>
+                    <td>{{ ci.item.price }}円</td>
+                    <td>{{ ci.amount }}</td>
+                    <td>{{ ci.item.price|default:0 }}円 × {{ ci.amount }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p><strong>合計　{{ total }} 円</strong></p>
+
+    <hr>
+
+    <form action="/shopping/purchaseConfirm/" method="post">
+        {% csrf_token %}
+
+        <h3>配送先</h3>
+        <table>
+            <tr>
+                <td>
+                    <label>
+                        <input type="radio" name="destination_type" value="registered" checked>
+                        会員登録住所に発送
+                    </label>
+                </td>
+                <td>{{ default_address }}</td>
+            </tr>
+            <tr>
+                <td>
+                    <label>
+                        <input type="radio" name="destination_type" value="other">
+                        別の住所に発送
+                    </label>
+                </td>
+                <td>
+                    <input type="text" name="other_address" size="50" placeholder="送り先住所を入力">
+                </td>
+            </tr>
+        </table>
+
+        <h3>お支払い方法</h3>
+        <p>代金引換</p>
+
+        {% if message %}
+            <p style="color:red;">{{ message }}</p>
+        {% endif %}
+
+        <p>
+            <button type="submit">確認画面へ</button>
+        </p>
+    </form>
+
+    <p>
+        <li><a href="/shopping/cart/">ショッピングカート</a></li>
+    </p>
+
+</body>
+</html>
