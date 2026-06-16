@@ -21,5 +21,4 @@ urlpatterns = [
 
     # ▼ 購入履歴
     path('purchaseHistory/', views.purchase_history, name='purchase_history'),
-    path('purchaseHistory/<int:purchase_id>/', views.purchase_detail, name='purchase_detail'),
 ]

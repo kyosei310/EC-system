@@ -25,6 +25,7 @@
                     <th>メーカー名</th>
                     <th>単価</th>
                     <th>数量</th>
+                    <th>数量変更</th>
                     <th>操作</th>
                 </tr>
             </thead>
@@ -35,12 +36,13 @@
                         <td>{{ ci.item.color }}</td>
                         <td>{{ ci.item.manufacturer }}</td>
                         <td>{{ ci.item.price }}円</td>
+                        <td>{{ ci.amount }}</td>
                         <td>
                                 <form action="{% url 'shopping:update_cart' ci.id %}" method="post">
                                 {% csrf_token %}
                                 <select name="amount">
                                     {% for q in ci.item.stock_range %}
-                                        <option value="{{ q }}" {% if q == ci.amount %}selected{% endif %}>{{ q }}</option>
+                                        <option value="{{ q }}" >{{ q }}</option>
                                     {% endfor %}
                                 </select>
                                 <button type="submit">更新</button>

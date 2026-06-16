@@ -21,7 +21,14 @@ class Item(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
+    @property
+    def stock_range(self):
+        """カートの数量プルダウン用"""
+        return range(1, min(self.stock, 99) + 1)
+
+
     item_id = models.IntegerField(
         primary_key=True,
         db_index=True,

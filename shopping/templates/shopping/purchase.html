@@ -13,14 +13,13 @@
 
     <hr>
 
-    <h3>カート内容</h3>
+    <h2>カート内容</h2>
     <table border="1" cellpadding="5" cellspacing="0">
         <thead>
             <tr>
                 <th>商品名</th>
                 <th>単価</th>
                 <th>数量</th>
-                <th>小計</th>
             </tr>
         </thead>
         <tbody>
@@ -29,7 +28,6 @@
                     <td>{{ ci.item.name }}</td>
                     <td>{{ ci.item.price }}円</td>
                     <td>{{ ci.amount }}</td>
-                    <td>{{ ci.item.price|default:0 }}円 × {{ ci.amount }}</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -41,32 +39,24 @@
     <form action="/shopping/purchaseConfirm/" method="post">
         {% csrf_token %}
 
-        <h3>配送先</h3>
-        <table>
-            <tr>
-                <td>
-                    <label>
-                        <input type="radio" name="destination_type" value="registered" checked>
-                        会員登録住所に発送
-                    </label>
-                </td>
-                <td>{{ default_address }}</td>
-            </tr>
-            <tr>
-                <td>
-                    <label>
-                        <input type="radio" name="destination_type" value="other">
-                        別の住所に発送
-                    </label>
-                </td>
-                <td>
-                    <input type="text" name="other_address" size="50" placeholder="送り先住所を入力">
-                </td>
-            </tr>
-        </table>
+        <h2>配送先</h2>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" name="destination_type" value="registered" checked>
+                会員登録住所に発送（{{ default_address }}）
+            </label>
+        </div>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" name="destination_type" value="other">
+                別の住所に発送<input type="text" name="other_address" size="50" placeholder="送り先住所を入力">
 
-        <h3>お支払い方法</h3>
-        <p>代金引換</p>
+            </label>
+        </div>
+
+
+        <h2>お支払い方法</h2>
+        <p>・代金引換でよろしく</p>
 
         {% if message %}
             <p style="color:red;">{{ message }}</p>

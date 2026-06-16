@@ -88,3 +88,17 @@ input[type=password] {
 	color: #f9aa33;
 	background-color: #ffffff;
 }
+
+.radio-group {
+    text-align: left;
+    margin-bottom: 10px; /* 各ラジオボタンの間隔を調整 */
+}
+
+.radio-label {
+    display: flex;
+    align-items: center; /* ラジオボタンとテキストを縦方向で揃える */
+}
+
+.radio-label input[type="radio"] {
+    margin-right: 5px; /* ラジオボタンとテキストの間隔を調整 */
+}
