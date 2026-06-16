@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品管理</title>
+    <link rel="stylesheet" href="{% static 'account/css/style.css' %}">
+</head>
+<body>
+    <h1>商品管理</h1>
+    <a href="{% url 'account:admin_item_add' %}">商品を追加</a>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>商品名</th>
+                <th>メーカー</th>
+                <th>色</th>
+                <th>価格</th>
+                <th>在庫</th>
+                <th>おすすめ</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.manufacturer }}</td>
+                <td>{{ item.color }}</td>
+                <td>{{ item.price }}円</td>
+                <td>{{ item.stock }}</td>
+                <td>{% if item.recommended %}はい{% else %}いいえ{% endif %}</td>
+                <td>
+                    <a href="{% url 'account:admin_item_edit' item.item_id %}">編集</a> |
+                    <a href="{% url 'account:admin_item_delete' item.item_id %}">削除</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">商品が登録されていません。</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+<br>
+<li><a href="/account/adminMain/">管理者メインページへ</a></li>
+</body>
+</html>

@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>購入履歴管理</title>
+    <link rel="stylesheet" href="{% static 'account/css/style.css' %}">
+</head>
+<body>
+    <h1>購入履歴管理</h1>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>注文番号</th>
+                <th>注文日時</th>
+                <th>配送先</th>
+                <th>合計金額</th>
+                <th>状態</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for purchase in purchases %}
+            <tr>
+                <td>{{ purchase.purchase_id }}</td>
+                <td>{{ purchase.booked_date|date:"Y/m/d H:i" }}</td>
+                <td>{{ purchase.destination }}</td>
+                <td>{{ purchase.total }}円</td>
+                <td>{% if purchase.cancel %}キャンセル済{% else %}有効{% endif %}</td>
+                <td>
+                    {% if not purchase.cancel %}
+                    <a href="{% url 'account:admin_cancel_purchase' purchase.purchase_id %}">キャンセル</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <li><a href="/account/adminMain/">管理者メインページへ</a></li>
+</body>
+</html>
