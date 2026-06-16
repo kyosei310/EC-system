@@ -5,10 +5,6 @@ from .models import Category, Item, ItemsInCart, Purchase, PurchaseDetail
 from account.models import AccountUser
 
 
-# ====================================================================
-# カート編集機能
-# ====================================================================
-
 def update_cart(request, cart_id):
     """カート内商品の数量変更"""
     login_user = get_login_user(request)
@@ -23,7 +19,6 @@ def update_cart(request, cart_id):
         except ValueError:
             new_amount = 1
 
-        # 在庫超過チェック
         if new_amount < 1:
             new_amount = 1
         if new_amount > cart_item.item.stock:
@@ -49,9 +44,6 @@ def delete_cart(request, cart_id):
     return redirect('shopping:cart')
 
 
-# ====================================================================
-# 購入機能（3段階：入力 → 確認 → 完了）
-# ====================================================================
 
 def purchase(request):
     """配送先入力画面"""
@@ -69,7 +61,6 @@ def purchase(request):
         'login_user': login_user,
         'cart_items': cart_items,
         'total': total,
-        # デフォルトは会員登録住所
         'default_address': login_user.address,
     }
     return render(request, 'shopping/purchase.html', context)
@@ -84,14 +75,12 @@ def purchase_confirm(request):
     if request.method != 'POST':
         return redirect('shopping:purchase')
 
-    # 配送先選択
     destination_type = request.POST.get('destination_type', 'registered')
     if destination_type == 'other':
         destination = request.POST.get('other_address', '').strip()
     else:
         destination = login_user.address
 
-    # 配送先が空ならエラーで戻す
     if not destination:
         cart_items = ItemsInCart.objects.filter(user=login_user).select_related('item')
         total = sum(ci.item.price * ci.amount for ci in cart_items)
@@ -104,7 +93,6 @@ def purchase_confirm(request):
         }
         return render(request, 'shopping/purchase.html', context)
 
-    # セッションに退避（PRGパターン）
     request.session['purchase_destination'] = destination
 
     cart_items = ItemsInCart.objects.filter(user=login_user).select_related('item')
@@ -140,10 +128,9 @@ def purchase_commit(request):
     if not cart_items:
         return redirect('shopping:cart')
 
-    # ===== 在庫チェック（再確認） =====
     for ci in cart_items:
         if ci.amount > ci.item.stock:
-            request.session['purchase_destination'] = destination  # 戻す
+            request.session['purchase_destination'] = destination  
             return render(request, 'shopping/purchase.html', {
                 'login_user': login_user,
                 'cart_items': cart_items,
@@ -152,11 +139,9 @@ def purchase_commit(request):
                 'message': f'「{ci.item.name}」の在庫が不足しています。',
             })
 
-    # ===== 注文ID採番（アプリ側採番のため max+1） =====
     last_purchase = Purchase.objects.order_by('-purchase_id').first()
     new_purchase_id = (last_purchase.purchase_id + 1) if last_purchase else 1
 
-    # ===== Purchase 作成 =====
     purchase = Purchase()
     purchase.purchase_id = new_purchase_id
     purchase.destination = destination
@@ -164,11 +149,9 @@ def purchase_commit(request):
     purchase.user = login_user
     purchase.save()
 
-    # ===== PurchaseDetail 採番開始値 =====
     last_detail = PurchaseDetail.objects.order_by('-purchase_detail_id').first()
     next_detail_id = (last_detail.purchase_detail_id + 1) if last_detail else 1
 
-    # ===== PurchaseDetail 作成 ＆ 在庫減算 =====
     for ci in cart_items:
         detail = PurchaseDetail()
         detail.purchase_detail_id = next_detail_id
@@ -178,11 +161,9 @@ def purchase_commit(request):
         detail.save()
         next_detail_id += 1
 
-        # 在庫減算
         ci.item.stock -= ci.amount
         ci.item.save()
 
-    # ===== カートクリア =====
     ItemsInCart.objects.filter(user=login_user).delete()
 
     context = {
@@ -192,9 +173,7 @@ def purchase_commit(request):
     return render(request, 'shopping/purchaseCommit.html', context)
 
 
-# ====================================================================
-# 購入履歴
-# ====================================================================
+
 def purchase_history(request):
     """購入履歴一覧"""
     login_user = get_login_user(request)
@@ -207,12 +186,11 @@ def purchase_history(request):
         .order_by('-booked_date')
     )
 
-    # 各注文の合計金額、商品詳細、商品点数を計算
     history = []
     for p in purchases:
         details = PurchaseDetail.objects.filter(purchase=p).select_related('item')
         total = sum(d.item.price * d.amount for d in details)
-        item_count = sum(d.amount for d in details)  # 商品点数を修正
+        item_count = sum(d.amount for d in details) 
         items = [
             {
                 'name': d.item.name,
@@ -224,9 +202,9 @@ def purchase_history(request):
         history.append({
             'purchase': p,
             'total': total,
-            'item_count': item_count,  # 修正した商品点数
+            'item_count': item_count, 
             'items': items,
-            'destination': p.destination,  # 配送先を追加
+            'destination': p.destination, 
         })
 
     context = {
@@ -313,7 +291,6 @@ def item_detail(request, item_id):
 def add_to_cart(request, item_id):
     login_user = get_login_user(request)
     if not login_user:
-        # 未ログイン → ログイン画面へ（ログイン後に元の商品詳細へ戻れるようnextを付与する）
         next_url = reverse('shopping:item_detail', args=[item_id])
         return redirect(f'/account/login/?next={next_url}')
 
