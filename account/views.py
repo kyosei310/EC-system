@@ -8,7 +8,6 @@ from shopping.models import Item, Purchase, PurchaseDetail, Category
 
 
 def admin_login(request):
-    """管理者ログイン"""
     if request.method == "POST":
         admin_id = request.POST.get("admin_id")
         password = request.POST.get("password")
@@ -27,20 +26,17 @@ def admin_login(request):
 
 
 def admin_logout(request):
-    """管理者ログアウト"""
     request.session.flush()
     return redirect("account:admin_login")
 
 
 def admin_main(request):
-    """管理者メインページ"""
     if not request.session.get("is_admin"):
         return redirect("account:admin_login")
     return render(request, "account/adminMain.html")
 
 
 def admin_items(request):
-    """商品一覧"""
     if not request.session.get("is_admin"):
         return redirect("account:admin_login")
     items = Item.objects.all()
@@ -48,7 +44,6 @@ def admin_items(request):
 
 
 def admin_item_add(request):
-    """商品追加"""
     if not request.session.get("is_admin"):
         return redirect("account:admin_login")
     if request.method == "POST":
@@ -104,7 +99,6 @@ def admin_item_add(request):
 
 
 def admin_item_edit(request, item_id):
-    """商品編集"""
     if not request.session.get("is_admin"):
         return redirect("account:admin_login")
     item = get_object_or_404(Item, pk=item_id)
@@ -123,7 +117,6 @@ def admin_item_edit(request, item_id):
 
 
 def admin_item_delete(request, item_id):
-    """商品削除"""
     if not request.session.get("is_admin"):
         return redirect("account:admin_login")
     item = get_object_or_404(Item, pk=item_id)
@@ -132,7 +125,6 @@ def admin_item_delete(request, item_id):
 
 
 def admin_purchase_history(request):
-    """購入履歴検索"""
     if not request.session.get("is_admin"):
         return redirect("account:admin_login")
     purchases = Purchase.objects.all().order_by("-booked_date")
@@ -140,7 +132,6 @@ def admin_purchase_history(request):
 
 
 def admin_cancel_purchase(request, purchase_id):
-    """購入キャンセル"""
     if not request.session.get("is_admin"):
         return redirect("account:admin_login")
     purchase = get_object_or_404(Purchase, pk=purchase_id)
@@ -287,9 +278,6 @@ def withdraw_confirm(request):
 
 
 
-
-
-
 def withdraw_commit(request):
     user = get_login_user(request)
     if not user:
@@ -297,6 +285,6 @@ def withdraw_commit(request):
     
     name = user.name
     user.delete()
-    request.session.flush()  # セッションを全クリア
+    request.session.flush() 
 
     return render(request, "account/withdrawCommit.html", {"name": name})

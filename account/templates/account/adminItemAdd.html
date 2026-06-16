@@ -12,18 +12,18 @@
     <form method="post">
         {% csrf_token %}
         
- {# ===== エラーメッセージ表示 ===== #}
- {% if errors %}
-     <div style="color:red; border:1px solid red; padding:10px; margin-bottom:15px;">
-         <p><strong>入力内容に不備があります</strong></p>
-         <ul>
-             {% for error in errors %}
-                 <li>{{ error }}</li>
-             {% endfor %}
-         </ul>
-     </div>
- {% endif %}
- <div>
+{# ===== エラーメッセージ表示 ===== #}
+{% if errors %}
+    <div style="color:red; border:1px solid red; padding:10px; margin-bottom:15px;">
+        <p><strong>入力内容に不備があります</strong></p>
+        <ul>
+            {% for error in errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+<div>
     <label for="item_id">商品ID:</label>
     <input type="number" name="item_id" id="item_id" value="{{ form_data.item_id|default:'' }}" required>
 </div>
