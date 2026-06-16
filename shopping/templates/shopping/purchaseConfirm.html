@@ -13,7 +13,7 @@
 
     <hr>
 
-    <h3>ご注文内容</h3>
+    <h2>ご注文内容</h2>
     <table border="1" cellpadding="5" cellspacing="0">
         <thead>
             <tr>
@@ -38,10 +38,10 @@
     </table>
     <p><strong>合計　{{ total }} 円</strong></p>
 
-    <h3>配送先</h3>
+    <h2>配送先</h2>
     <p>{{ destination }}</p>
 
-    <h3>お支払い方法</h3>
+    <h2>お支払い方法</h2>
     <p>{{ payment_method }}</p>
 
     <form action="{% url 'shopping:purchase_commit' %}" method="post">

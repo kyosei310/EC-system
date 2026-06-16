@@ -14,32 +14,33 @@
     <hr>
 
     {% if history %}
-        <table border="1" cellpadding="5" cellspacing="0">
-            <thead>
-                <tr>
-                    <th>注文番号</th>
-                    <th>注文日時</th>
-                    <th>商品点数</th>
-                    <th>合計金額</th>
-                    <th>状態</th>
-                    <th>詳細</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for h in history %}
+        {% for h in history %}
+            <h2>注文番号: {{ h.purchase.purchase_id }}</h2>
+            <p><strong>注文日時:</strong> {{ h.purchase.booked_date|date:"Y/m/d H:i" }}</p>
+            <p><strong>配送先:</strong> {{ h.destination }}</p>
+            <p><strong>合計金額:</strong> {{ h.total }}円</p>
+            <p><strong>状態:</strong> {% if h.purchase.cancel %}キャンセル済{% else %}有効{% endif %}</p>
+
+            <table border="1" cellpadding="5" cellspacing="0">
+                <thead>
                     <tr>
-                        <td>{{ h.purchase.purchase_id }}</td>
-                        <td>{{ h.purchase.booked_date|date:"Y/m/d H:i" }}</td>
-                        <td>{{ h.item_count }}</td>
-                        <td>{{ h.total }}円</td>
-                        <td>{% if h.purchase.cancel %}キャンセル済{% else %}有効{% endif %}</td>
-                        <td>
-                            <a href="{% url 'shopping:purchase_detail' h.purchase.purchase_id %}"></a>
-                        </td>
+                        <th>商品名</th>
+                        <th>単価</th>
+                        <th>数量</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for item in h.items %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.price }}円</td>
+                            <td>{{ item.amount }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <hr>
+        {% endfor %}
     {% else %}
         <p>購入履歴はありません。</p>
     {% endif %}

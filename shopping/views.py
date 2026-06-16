@@ -195,7 +195,6 @@ def purchase_commit(request):
 # ====================================================================
 # 購入履歴
 # ====================================================================
-
 def purchase_history(request):
     """購入履歴一覧"""
     login_user = get_login_user(request)
@@ -208,15 +207,26 @@ def purchase_history(request):
         .order_by('-booked_date')
     )
 
-    # 各注文の合計金額を計算
+    # 各注文の合計金額、商品詳細、商品点数を計算
     history = []
     for p in purchases:
         details = PurchaseDetail.objects.filter(purchase=p).select_related('item')
         total = sum(d.item.price * d.amount for d in details)
+        item_count = sum(d.amount for d in details)  # 商品点数を修正
+        items = [
+            {
+                'name': d.item.name,
+                'price': d.item.price,
+                'amount': d.amount,
+            }
+            for d in details
+        ]
         history.append({
             'purchase': p,
             'total': total,
-            'item_count': details.count(),
+            'item_count': item_count,  # 修正した商品点数
+            'items': items,
+            'destination': p.destination,  # 配送先を追加
         })
 
     context = {
