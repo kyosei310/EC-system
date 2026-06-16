@@ -3,6 +3,150 @@ from django.urls import reverse
 from django.views.generic import View
 from account import models
 from account import forms
+from django.contrib.auth.hashers import check_password
+from shopping.models import Item, Purchase, PurchaseDetail, Category
+
+
+def admin_login(request):
+    """管理者ログイン"""
+    if request.method == "POST":
+        admin_id = request.POST.get("admin_id")
+        password = request.POST.get("password")
+        try:
+            admin = models.Admin.objects.get(admin_id=admin_id)
+            if check_password(password, admin.password):
+                request.session["is_admin"] = True
+                request.session["admin_id"] = admin.admin_id
+                return redirect("account:admin_main")
+            else:
+                message = "パスワードが正しくありません。"
+        except models.Admin.DoesNotExist:
+            message = "管理者が存在しません。"
+        return render(request, "account/adminLogin.html", {"message": message})
+    return render(request, "account/adminLogin.html")
+
+
+def admin_logout(request):
+    """管理者ログアウト"""
+    request.session.flush()
+    return redirect("account:admin_login")
+
+
+def admin_main(request):
+    """管理者メインページ"""
+    if not request.session.get("is_admin"):
+        return redirect("account:admin_login")
+    return render(request, "account/adminMain.html")
+
+
+def admin_items(request):
+    """商品一覧"""
+    if not request.session.get("is_admin"):
+        return redirect("account:admin_login")
+    items = Item.objects.all()
+    return render(request, "account/adminItems.html", {"items": items})
+
+
+def admin_item_add(request):
+    """商品追加"""
+    if not request.session.get("is_admin"):
+        return redirect("account:admin_login")
+    if request.method == "POST":
+        item_id = request.POST.get("item_id")
+        name = request.POST.get("name")
+        manufacturer = request.POST.get("manufacturer")
+        color = request.POST.get("color")
+        price = int(request.POST.get("price"))
+        stock = int(request.POST.get("stock"))
+        recommended = request.POST.get("recommended") == "on"
+        category_id = request.POST.get("category_id")
+        category = Category.objects.get(pk=category_id)
+        
+        
+        errors = []
+        if Item.objects.filter(pk=item_id).exists():
+            errors.append(f"商品ID「{item_id}」は既に登録されています。別のIDを入力してください。")
+            
+        if errors:
+            categories = Category.objects.all()
+            form_data = {
+                "item_id": item_id,
+                "name": name,
+                "manufacturer": manufacturer,
+                "color": color,
+                "price": price,
+                "stock": stock,
+                "recommended": recommended,
+                "category_id": category_id,
+            }
+
+            return render(request, "account/adminItemAdd.html", {
+                "categories": categories,
+                "errors": errors,
+                "form_data": form_data,
+            })
+
+
+        
+        Item.objects.create(
+            item_id=item_id,
+            name=name,
+            manufacturer=manufacturer,
+            color=color,
+            price=price,
+            stock=stock,
+            recommended=recommended,
+            category=category,
+        )
+        return redirect("account:admin_items")
+    categories = Category.objects.all()
+    return render(request, "account/adminItemAdd.html", {"categories": categories})
+
+
+def admin_item_edit(request, item_id):
+    """商品編集"""
+    if not request.session.get("is_admin"):
+        return redirect("account:admin_login")
+    item = get_object_or_404(Item, pk=item_id)
+    if request.method == "POST":
+        item.name = request.POST.get("name")
+        item.manufacturer = request.POST.get("manufacturer")
+        item.color = request.POST.get("color")
+        item.price = int(request.POST.get("price"))
+        item.stock = int(request.POST.get("stock"))
+        item.recommended = request.POST.get("recommended") == "on"
+        item.category = Category.objects.get(pk=request.POST.get("category_id"))
+        item.save()
+        return redirect("account:admin_items")
+    categories = Category.objects.all()
+    return render(request, "account/adminItemEdit.html", {"item": item, "categories": categories})
+
+
+def admin_item_delete(request, item_id):
+    """商品削除"""
+    if not request.session.get("is_admin"):
+        return redirect("account:admin_login")
+    item = get_object_or_404(Item, pk=item_id)
+    item.delete()
+    return redirect("account:admin_items")
+
+
+def admin_purchase_history(request):
+    """購入履歴検索"""
+    if not request.session.get("is_admin"):
+        return redirect("account:admin_login")
+    purchases = Purchase.objects.all().order_by("-booked_date")
+    return render(request, "account/adminPurchaseHistory.html", {"purchases": purchases})
+
+
+def admin_cancel_purchase(request, purchase_id):
+    """購入キャンセル"""
+    if not request.session.get("is_admin"):
+        return redirect("account:admin_login")
+    purchase = get_object_or_404(Purchase, pk=purchase_id)
+    purchase.cancel = True
+    purchase.save()
+    return redirect("account:admin_purchase_history")
 
 
 def get_login_user(request):

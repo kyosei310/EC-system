@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品編集</title>
+    <link rel="stylesheet" href="{% static 'account/css/style.css' %}">
+</head>
+<body>
+    <h1>商品編集</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="name">商品名:</label>
+            <input type="text" name="name" id="name" value="{{ item.name }}" required>
+        </div>
+        <div>
+            <label for="manufacturer">メーカー:</label>
+            <input type="text" name="manufacturer" id="manufacturer" value="{{ item.manufacturer }}" required>
+        </div>
+        <div>
+            <label for="color">色:</label>
+            <input type="text" name="color" id="color" value="{{ item.color }}" required>
+        </div>
+        <div>
+            <label for="price">価格:</label>
+            <input type="number" name="price" id="price" value="{{ item.price }}" required>
+        </div>
+        <div>
+            <label for="stock">在庫:</label>
+            <input type="number" name="stock" id="stock" value="{{ item.stock }}" required>
+        </div>
+        <div>
+            <label for="recommended">おすすめ:</label>
+            <input type="checkbox" name="recommended" id="recommended" {% if item.recommended %}checked{% endif %}>
+        </div>
+        <div>
+            <label for="category_id">カテゴリ:</label>
+            <select name="category_id" id="category_id" required>
+                {% for category in categories %}
+                <option value="{{ category.category_id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit">更新</button>
+    </form>
+    <br>
+    <li><a href="/account/adminItems/">商品管理へ戻る</a></li>
+    <li><a href="/account/adminMain/">管理者メインページへ</a></li>
+</body>
+</html>

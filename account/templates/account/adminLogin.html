@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理者ログイン</title>
+    <link rel="stylesheet" href="{% static 'account/css/style.css' %}">
+</head>
+<body>
+    <h1>管理者ログイン</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="admin_id">管理者ID:</label>
+            <input type="text" name="admin_id" id="admin_id" required>
+        </div>
+        <div>
+            <label for="password">パスワード:</label>
+            <input type="password" name="password" id="password" required>
+        </div>
+        <div>
+            <button type="submit">ログイン</button>
+        </div>
+    </form>
+    {% if message %}
+        <p style="color: red;">{{ message }}</p>
+    {% endif %}
+</body>
+</html>
